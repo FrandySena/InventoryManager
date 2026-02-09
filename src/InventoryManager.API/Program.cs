@@ -1,5 +1,6 @@
 var builder = WebApplication.CreateBuilder(args);
 
+//TODO: Delete this line
 var Licensekey = "YOUR_LICENSE_KEY";
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
