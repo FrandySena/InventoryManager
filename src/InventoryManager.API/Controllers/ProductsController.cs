@@ -1,5 +1,7 @@
-﻿using InventoryManager.API.Models;
-using InventoryManager.API.Models.Entities;
+﻿using InventoryManager.API.Data;
+using InventoryManager.API.Data.Entities;
+using InventoryManager.API.Models;
+using InventoryManager.API.Models.Dtos;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InventoryManager.API.Controllers
@@ -8,18 +10,17 @@ namespace InventoryManager.API.Controllers
     [Route("api/[controller]")]
     public class ProductsController : ControllerBase
     {
+        private readonly InventoryManagerContext _context;
 
-        private static readonly List<Product> _products = new List<Product>
+        public ProductsController(InventoryManagerContext context) 
         {
-            new Product { Id = 1, Name = "Laptop A", Description = "Is a laptop A", Price = 999.0m, StockQuantity = 100, CategoryId = 1 },
-            new Product { Id = 2, Name = "PC B", Description = "Is a PC B", Price = 1299.0m, StockQuantity = 50, CategoryId = 1 },
-            new Product { Id = 3, Name = "Smartphone C", Description = "Is a smartphone C", Price = 699.0m, StockQuantity = 200, CategoryId = 2 }
-        };
+            _context = context;
+        }
 
         [HttpGet]
         public IActionResult GetProducts()
         {
-            var productsDto = _products.Select(p => new ProductDto
+            var productsDto = _context.Products.Select(p => new ProductDto
             {
                 Id = p.Id,
                 Name = p.Name,
@@ -34,7 +35,7 @@ namespace InventoryManager.API.Controllers
         [HttpGet("{id}")]
         public IActionResult GetProductById(int id)
         {
-            var product = _products.FirstOrDefault(p => p.Id == id);
+            var product = _context.Products.FirstOrDefault(p => p.Id == id);
             if (product == null)
             {
                 return NotFound();
@@ -51,6 +52,27 @@ namespace InventoryManager.API.Controllers
             return Ok(result);
         }
 
+        [HttpGet("with-categories")]
+        public IActionResult GetAll()
+        {
+            var productsWithCategories = _context.Products.Select(p => new ProductsWithCategory()
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Description = p.Description,
+                Price = p.Price,
+                StockQuantity = p.StockQuantity,
+                Category = new CategoryDto
+                {
+                    Id = p.Category.Id,
+                    Name = p.Category.Name,
+                    Description = p.Category.Description
+                }
+            }).ToList();
+
+            return Ok(productsWithCategories);
+        }
+
         [HttpPost]
         public IActionResult Create(ProductDto productRequest)
         {
@@ -58,10 +80,8 @@ namespace InventoryManager.API.Controllers
             {
                 return BadRequest("Invalid product data. Name must not be empty, price must be greater than 0, and stock quantity must be non-negative.");
             }
-            int newId = _products.Count > 0 ? _products.Max(p => p.Id) + 1 : 1;
             var product = new Product
             {
-                Id = newId,
                 Name = productRequest.Name,
                 Description = productRequest.Description,
                 Price = productRequest.Price,
@@ -69,7 +89,8 @@ namespace InventoryManager.API.Controllers
                 CategoryId = productRequest.CategoryId
             };
 
-            _products.Add(product);
+            _context.Products.Add(product);
+            _context.SaveChanges();
             return Ok(product);
         }
 
@@ -87,7 +108,7 @@ namespace InventoryManager.API.Controllers
                 return BadRequest("Product ID mismatch.");
             }
 
-            var existingProduct = _products.FirstOrDefault(p => p.Id == id);
+            var existingProduct = _context.Products.FirstOrDefault(p => p.Id == id);
             if (existingProduct == null)
             {
                 return NotFound();
@@ -105,12 +126,12 @@ namespace InventoryManager.API.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            var product = _products.FirstOrDefault(p => p.Id == id);
+            var product = _context.Products.FirstOrDefault(p => p.Id == id);
             if (product == null)
             {
                 return NotFound();
             }
-            _products.Remove(product);
+            _context.Products.Remove(product);
             return NoContent();
         }
     }

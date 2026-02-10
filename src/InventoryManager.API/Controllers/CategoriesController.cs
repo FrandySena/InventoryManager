@@ -1,5 +1,6 @@
-﻿using InventoryManager.API.Models;
-using InventoryManager.API.Models.Entities;
+﻿using InventoryManager.API.Data;
+using InventoryManager.API.Data.Entities;
+using InventoryManager.API.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InventoryManager.API.Controllers
@@ -8,17 +9,16 @@ namespace InventoryManager.API.Controllers
     [Route("api/[controller]")]
     public class CategoriesController : ControllerBase
     {
-
-        private static readonly List<Category> _Categories = new List<Category>
+        private readonly InventoryManagerContext _context;
+        public CategoriesController(InventoryManagerContext context)
         {
-            new Category { Id = 1, Name = "Laptops", Description = "Portable computers" },
-            new Category { Id = 2, Name = "Smartphones", Description = "Mobile phones with advanced features" }
-        };
+            _context = context;
+        }
 
         [HttpGet]
         public IActionResult GetCategories()
         {
-            var categoriesDto = _Categories.Select(c => new CategoryDto
+            var categoriesDto = _context.Categories.Select(c => new CategoryDto
             {
                 Id = c.Id,
                 Name = c.Name,
@@ -30,7 +30,7 @@ namespace InventoryManager.API.Controllers
         [HttpGet("{id}")]
         public IActionResult GetCategoryById(int id)
         {
-            var category = _Categories.FirstOrDefault(c => c.Id == id);
+            var category = _context.Categories.FirstOrDefault(c => c.Id == id);
             if (category == null)
             {
                 return NotFound();
@@ -51,15 +51,15 @@ namespace InventoryManager.API.Controllers
             {
                 return BadRequest("Invalid category data. Name must not be empty.");
             }
-            int newId = _Categories.Count > 0 ? _Categories.Max(p => p.Id) + 1 : 1;
+
             var category = new Category
             {
-                Id = newId,
                 Name = categoryRequest.Name,
                 Description = categoryRequest.Description
             };
 
-            _Categories.Add(category);
+            _context.Categories.Add(category);
+            _context.SaveChanges();
             return Ok(new { Id = category.Id });
         }
 
@@ -77,7 +77,7 @@ namespace InventoryManager.API.Controllers
                 return BadRequest("Category ID mismatch.");
             }
 
-            var existingCategory = _Categories.FirstOrDefault(c => c.Id == id);
+            var existingCategory = _context.Categories.FirstOrDefault(c => c.Id == id);
             if (existingCategory == null)
             {
                 return NotFound();
@@ -86,18 +86,22 @@ namespace InventoryManager.API.Controllers
             existingCategory.Name = categoryRequest.Name;
             existingCategory.Description = categoryRequest.Description;
 
+            _context.Update(existingCategory);
+            _context.SaveChanges();
+
             return NoContent();
         }
 
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            var category = _Categories.FirstOrDefault(c => c.Id == id);
+            var category = _context.Categories.FirstOrDefault(c => c.Id == id);
             if (category == null)
             {
                 return NotFound();
             }
-            _Categories.Remove(category);
+            _context.Categories.Remove(category);
+            _context.SaveChanges();
             return NoContent();
         }
     }
