@@ -1,4 +1,5 @@
 ﻿using InventoryManager.API.Models;
+using InventoryManager.API.Models.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InventoryManager.API.Controllers
@@ -15,12 +16,19 @@ namespace InventoryManager.API.Controllers
             new Product { Id = 3, Name = "Smartphone C", Description = "Is a smartphone C", Price = 699.0m, StockQuantity = 200, CategoryId = 2 }
         };
 
-        //me quede en la 1:31:03 clase 27
-
         [HttpGet]
         public IActionResult GetProducts()
         {
-            return Ok(_products);
+            var productsDto = _products.Select(p => new ProductDto
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Description = p.Description,
+                Price = p.Price,
+                StockQuantity = p.StockQuantity,
+                CategoryId = p.CategoryId
+            }).ToList();
+            return Ok(productsDto);
         }
 
         [HttpGet("{id}")]
@@ -31,33 +39,50 @@ namespace InventoryManager.API.Controllers
             {
                 return NotFound();
             }
-            return Ok(product);
+            var result = new ProductDto
+            {
+                Id = product.Id,
+                Name = product.Name,
+                Description = product.Description,
+                Price = product.Price,
+                StockQuantity = product.StockQuantity,
+                CategoryId = product.CategoryId
+            };
+            return Ok(result);
         }
 
         [HttpPost]
-        public IActionResult Create(Product product)
+        public IActionResult Create(ProductDto productRequest)
         {
-            if (string.IsNullOrWhiteSpace(product.Name) || product.Price <= 0 || product.StockQuantity < 0)
+            if (string.IsNullOrWhiteSpace(productRequest.Name) || productRequest.Price <= 0 || productRequest.StockQuantity < 0)
             {
                 return BadRequest("Invalid product data. Name must not be empty, price must be greater than 0, and stock quantity must be non-negative.");
             }
             int newId = _products.Count > 0 ? _products.Max(p => p.Id) + 1 : 1;
-            product.Id = newId;
+            var product = new Product
+            {
+                Id = newId,
+                Name = productRequest.Name,
+                Description = productRequest.Description,
+                Price = productRequest.Price,
+                StockQuantity = productRequest.StockQuantity,
+                CategoryId = productRequest.CategoryId
+            };
 
             _products.Add(product);
             return Ok(product);
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(int id, Product product)
+        public IActionResult Update(int id, ProductDto productRequest)
         {
 
-            if (string.IsNullOrWhiteSpace(product.Name) || product.Price <= 0 || product.StockQuantity < 0)
+            if (string.IsNullOrWhiteSpace(productRequest.Name) || productRequest.Price <= 0 || productRequest.StockQuantity < 0)
             {
                 return BadRequest("Invalid product data. Name must not be empty, price must be greater than 0, and stock quantity must be non-negative.");
             }
 
-            if (id != product.Id)
+            if (id != productRequest.Id)
             {
                 return BadRequest("Product ID mismatch.");
             }
@@ -68,13 +93,13 @@ namespace InventoryManager.API.Controllers
                 return NotFound();
             }
 
-            existingProduct.Name = product.Name;
-            existingProduct.Description = product.Description;
-            existingProduct.Price = product.Price;
-            existingProduct.StockQuantity = product.StockQuantity;
-            existingProduct.CategoryId = product.CategoryId;
+            existingProduct.Name = productRequest.Name;
+            existingProduct.Description = productRequest.Description;
+            existingProduct.Price = productRequest.Price;
+            existingProduct.StockQuantity = productRequest.StockQuantity;
+            existingProduct.CategoryId = productRequest.CategoryId;
 
-            return Ok(product);
+            return NoContent();
         }
 
         [HttpDelete("{id}")]
@@ -86,7 +111,7 @@ namespace InventoryManager.API.Controllers
                 return NotFound();
             }
             _products.Remove(product);
-            return Ok(_products);
+            return NoContent();
         }
     }
 }
