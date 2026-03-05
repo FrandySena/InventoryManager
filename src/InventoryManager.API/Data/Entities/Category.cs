@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace InventoryManager.API.Data.Entities
 {
-    [Table("Categories")]
+    //[Table("Categories")]
     public class Category
     {
         [Key]
