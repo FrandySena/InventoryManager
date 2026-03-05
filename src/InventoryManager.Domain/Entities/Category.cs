@@ -1,9 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
-namespace InventoryManager.API.Data.Entities
+namespace InventoryManager.Domain.Entities
 {
-    //[Table("Categories")]
     public class Category
     {
         [Key]

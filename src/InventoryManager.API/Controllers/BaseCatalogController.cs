@@ -1,4 +1,4 @@
-﻿using InventoryManager.API.Data;
+﻿using InventoryManager.Persistence;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 

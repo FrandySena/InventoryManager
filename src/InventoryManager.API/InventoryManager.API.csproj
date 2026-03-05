@@ -9,8 +9,8 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="16.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -18,6 +18,11 @@
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="10.1.1" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="10.1.1" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\InventoryManager.Infrastructure\InventoryManager.Infrastructure.csproj" />
+    <ProjectReference Include="..\InventoryManager.Persistence\InventoryManager.Persistence.csproj" />
   </ItemGroup>
 
 </Project>
