@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace InventoryManager.API.Data.Entities
 {
-    [Table("Products")]
+    //[Table("Products")]
     public class Product
     {
         [Key]
