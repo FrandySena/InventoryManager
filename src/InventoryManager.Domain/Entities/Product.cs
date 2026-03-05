@@ -2,9 +2,8 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.CompilerServices;
 
-namespace InventoryManager.API.Data.Entities
+namespace InventoryManager.Domain.Entities
 {
-    //[Table("Products")]
     public class Product
     {
         [Key]

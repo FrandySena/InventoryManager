@@ -1,4 +1,4 @@
-﻿namespace InventoryManager.API.Data.Entities
+﻿namespace InventoryManager.Domain.Entities
 {
     public class InventoryMovement
     {
