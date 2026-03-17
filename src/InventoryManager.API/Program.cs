@@ -1,5 +1,7 @@
 using InventoryManager.API.Models;
+using InventoryManager.Application.Services;
 using InventoryManager.Domain.Entities;
+using InventoryManager.Domain.Entities.Catalogs;
 using InventoryManager.Infrastructure.Repositories;
 using InventoryManager.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +24,8 @@ builder.Services.AddTransient<ProductRepository>();
 builder.Services.AddTransient<GenericRepository<Category>>();
 builder.Services.AddTransient<GenericRepository<InventoryMovement>>();
 builder.Services.AddTransient<UnitOfWork>();
+builder.Services.AddTransient<CatalogService>();
+builder.Services.AddTransient<InventoryService>();
 
 var app = builder.Build();
 

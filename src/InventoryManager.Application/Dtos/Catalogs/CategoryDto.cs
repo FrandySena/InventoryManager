@@ -1,4 +1,4 @@
-﻿namespace InventoryManager.API.Models
+﻿namespace InventoryManager.Application.Dtos.Catalogs
 {
     public class CategoryDto
     {

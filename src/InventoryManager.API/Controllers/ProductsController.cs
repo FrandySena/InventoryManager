@@ -1,8 +1,6 @@
-﻿using AutoMapper;
-using InventoryManager.API.Models;
-using InventoryManager.API.Models.Dtos;
-using InventoryManager.Domain.Entities;
-using InventoryManager.Infrastructure.Repositories;
+﻿using InventoryManager.Application.Dtos.Catalogs;
+using InventoryManager.Application.Responses;
+using InventoryManager.Application.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InventoryManager.API.Controllers
@@ -11,144 +9,31 @@ namespace InventoryManager.API.Controllers
     [Route("api/[controller]")]
     public class ProductsController : ControllerBase
     {
-        private readonly IMapper _mapper;
-        private readonly ProductRepository _productRepository;
-        private readonly UnitOfWork _unitOfWork;
+        private readonly CatalogService _catalogService;
 
-        public ProductsController(IMapper mapper, 
-            ProductRepository productRepository, 
-            UnitOfWork unitOfWork)
+        public ProductsController(CatalogService catalogService)
         {
-            _mapper = mapper;
-            _productRepository = productRepository;
-            _unitOfWork = unitOfWork;
+            _catalogService = catalogService;
         }
 
         [HttpGet]
-        public IActionResult GetProducts()
-        {
-            var list = _productRepository.GetAll();
-
-            var response = _mapper.Map<List<ProductDto>>(list);
-            var apiResponse = ApiResponse<List<ProductDto>>.SuccessResponse(response);
-
-            return Ok(apiResponse);
-        }
+        public ApiResponse<List<ProductDto>> GetProducts() => _catalogService.GetAllProducts();
 
         [HttpGet("{id}")]
-        public IActionResult GetProductById(int id)
-        {
-            var product = _productRepository.GetById(id);
-            if (product == null)
-            {
-                return NotFound(ApiResponse<ProductDto>.FailureResponse("Product not found", 404));
-            }
+        public ApiResponse<ProductDto> GetById(int id) => _catalogService.GetProductById(id);
 
-            var result = _mapper.Map<ProductDto>(product);
-            var apiResponse = ApiResponse<ProductDto>.SuccessResponse(result);
-
-            return Ok(apiResponse);
-        }
 
         [HttpGet("with-categories")]
-        public IActionResult GetAll()
-        {
-
-            var list = _productRepository.GetAll();
-
-            var productsWithCategories = _productRepository.GetProductsWithCategory()
-                .Select(p => new ProductsWithCategory
-                {
-                    Id = p.Id,
-                    Name = p.Name,
-                    Description = p.Description,
-                    Price = p.Price,
-                    StockQuantity = p.StockQuantity,
-                    Category = new CategoryDto
-                    {
-                        Id = p.Category.Id,
-                        Name = p.Category.Name,
-                        Description = p.Category.Description
-                    }
-                }).ToList();
-
-            var apiResponse = ApiResponse<List<ProductsWithCategory>>.SuccessResponse(productsWithCategories);
-
-            return Ok(apiResponse);
-        }
+        public IActionResult GetAll() => Ok(_catalogService.GetAllProductsWithCategory());
 
         [HttpPost]
-        public IActionResult Create(ProductDto productRequest)
-        {
-            if (string.IsNullOrWhiteSpace(productRequest.Name) || productRequest.Price <= 0 || productRequest.StockQuantity < 0)
-            {
-                return BadRequest(ApiResponse<ProductDto>.FailureResponse("Invalid product data. Name must not be empty, price must be greater than 0, and stock quantity must be non-negative.", 400));
-            }
-
-            var product = _mapper.Map<Product>(productRequest);
-
-            _unitOfWork.BeginTransaction();
-            _productRepository.Add(product);
-            _unitOfWork.Complete();
-            _unitOfWork.CommitTransaction();
-
-            var apiResponse = ApiResponse<ProductDto>.SuccessResponse(null, "Product created successfully", 201);
-            return Ok(apiResponse);
-        }
+        public IActionResult Create(ProductDto productRequest) => Ok(_catalogService.CreateProduct(productRequest));
 
         [HttpPut("{id}")]
-        public IActionResult Update(int id, ProductDto productRequest)
-        {
-
-            if (string.IsNullOrWhiteSpace(productRequest.Name) || productRequest.Price <= 0 || productRequest.StockQuantity < 0)
-            {
-                return BadRequest(ApiResponse<ProductDto>.FailureResponse("Invalid product data. Name must not be empty, price must be greater than 0, and stock quantity must be non-negative.", 400));
-            }
-
-            if (id != productRequest.Id)
-            {
-                return BadRequest(ApiResponse<ProductDto>.FailureResponse("Product ID mismatch.", 400));
-            }
-
-            var existingProduct = _productRepository.GetById(id);
-            if (existingProduct == null)
-            {
-                return NotFound(ApiResponse<ProductDto>.FailureResponse("Product not found", 404));
-            }
-
-            _unitOfWork.BeginTransaction();
-            existingProduct.Name = productRequest.Name;
-            existingProduct.Description = productRequest.Description;
-            existingProduct.Price = productRequest.Price;
-            existingProduct.StockQuantity = productRequest.StockQuantity;
-            existingProduct.CategoryId = productRequest.CategoryId;
-
-
-            _productRepository.Update(existingProduct);
-            _unitOfWork.Complete();
-            _unitOfWork.CommitTransaction();
-
-            var apiResponse = ApiResponse<ProductDto>.SuccessResponse(null, "Product updated successfully", 200);
-            return Ok(apiResponse);
-        }
+        public IActionResult Update(int id, ProductDto productRequest) => Ok(_catalogService.UpdateProduct(id, productRequest));
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
-        {
-            var product = _productRepository.GetById(id);
-            if (product == null)
-            {
-                return NotFound(ApiResponse<ProductDto>.FailureResponse("Product not found", 404));
-            }
+        public IActionResult Delete(int id) => Ok(_catalogService.DeleteProduct(id));
 
-            var apiResponse = ApiResponse<ProductDto>.SuccessResponse(null, "Product deleted successfully", 200);
-
-            _unitOfWork.BeginTransaction();
-            _productRepository.Delete(id);
-            _unitOfWork.Complete();
-            _unitOfWork.CommitTransaction();
-
-            return Ok(apiResponse);
-        }
     }
 }

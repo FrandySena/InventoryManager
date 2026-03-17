@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.CompilerServices;
 
-namespace InventoryManager.Domain.Entities
+namespace InventoryManager.Domain.Entities.Catalogs
 {
     public class Product
     {

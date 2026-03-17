@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
-using InventoryManager.API.Models.Dtos;
+using InventoryManager.Application.Dtos;
+using InventoryManager.Application.Dtos.Catalogs;
 using InventoryManager.Domain.Entities;
+using InventoryManager.Domain.Entities.Catalogs;
 namespace InventoryManager.API.Models
 {
     public class MappingProfile : Profile

@@ -1,4 +1,5 @@
 ﻿using InventoryManager.Domain.Entities;
+using InventoryManager.Domain.Entities.Catalogs;
 using InventoryManager.Persistence;
 using Microsoft.EntityFrameworkCore.Query.Internal;
 
