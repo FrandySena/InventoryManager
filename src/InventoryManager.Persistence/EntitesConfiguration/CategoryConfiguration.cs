@@ -1,4 +1,4 @@
-﻿using InventoryManager.Domain.Entities;
+﻿using InventoryManager.Domain.Entities.Catalogs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

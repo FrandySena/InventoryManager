@@ -1,6 +1,13 @@
 <Solution>
-  <Project Path="InventoryManager.API/InventoryManager.API.csproj" />
-  <Project Path="InventoryManager.Domain/InventoryManager.Domain.csproj" Id="f54e4f2c-94b8-40e3-aca0-94c446e710dc" />
-  <Project Path="InventoryManager.Infrastructure/InventoryManager.Infrastructure.csproj" Id="47c20ab8-a4a8-44ec-968c-96a473ae71de" />
-  <Project Path="InventoryManager.Persistence/InventoryManager.Persistence.csproj" Id="774f4667-25e0-4bf7-94e2-a11991f1b843" />
+  <Folder Name="/Business/">
+    <Project Path="InventoryManager.Application/InventoryManager.Application.csproj" Id="eb79801c-56dd-4a35-be07-94893a7a4823" />
+  </Folder>
+  <Folder Name="/Data/">
+    <Project Path="InventoryManager.Domain/InventoryManager.Domain.csproj" Id="f54e4f2c-94b8-40e3-aca0-94c446e710dc" />
+    <Project Path="InventoryManager.Infrastructure/InventoryManager.Infrastructure.csproj" Id="47c20ab8-a4a8-44ec-968c-96a473ae71de" />
+    <Project Path="InventoryManager.Persistence/InventoryManager.Persistence.csproj" Id="774f4667-25e0-4bf7-94e2-a11991f1b843" />
+  </Folder>
+  <Folder Name="/Presentation/">
+    <Project Path="InventoryManager.API/InventoryManager.API.csproj" />
+  </Folder>
 </Solution>

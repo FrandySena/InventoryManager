@@ -1,14 +1,14 @@
-﻿namespace InventoryManager.API.Models.Dtos
+﻿namespace InventoryManager.Application.Responses
 {
     public class ApiResponse<T>
         where T : class
     {
         public T Data { get; set; }
-        public string Message { get; set; }
+        public string? Message { get; set; }
         public bool Success { get; set; }
         public int StatusCode { get; set; }
 
-        public static ApiResponse<T> SuccessResponse(T data, string message = "Request successful", int statusCode = 200)
+        public static ApiResponse<T> SuccessResponse(T data, string? message = "Request successful", int statusCode = 200)
         {
             return new ApiResponse<T>
             {

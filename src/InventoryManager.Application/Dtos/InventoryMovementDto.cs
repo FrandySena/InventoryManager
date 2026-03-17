@@ -1,4 +1,4 @@
-﻿namespace InventoryManager.API.Models.Dtos
+﻿namespace InventoryManager.Application.Dtos
 {
     public class InventoryMovementDto
     {

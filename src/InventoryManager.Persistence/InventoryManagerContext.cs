@@ -1,4 +1,5 @@
 ﻿using InventoryManager.Domain.Entities;
+using InventoryManager.Domain.Entities.Catalogs;
 using Microsoft.EntityFrameworkCore;
 
 namespace InventoryManager.Persistence
